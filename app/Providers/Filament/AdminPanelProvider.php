@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->brandLogo(fn () => view('filament.app.logo'))
             ->brandLogoHeight('1.25rem')
+            ->spa()
             ->navigationGroups([
                 'Shop',
                 'Blog',
