@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
                 'Shop',
                 'Blog',
             ])
-            ->databaseNotifications()
+            ->databaseNotifications(isLazy: false)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
