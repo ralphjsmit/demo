@@ -2,6 +2,27 @@
 
 namespace App\Filament\Resources\Shop;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Shop\OrderResource\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\Shop\OrderResource\Pages\ListOrders;
+use App\Filament\Resources\Shop\OrderResource\Pages\CreateOrder;
+use App\Filament\Resources\Shop\OrderResource\Pages\EditOrder;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\MarkdownEditor;
 use App\Enums\OrderStatus;
 use App\Filament\Clusters\Products\Resources\ProductResource;
 use App\Filament\Resources\Shop\OrderResource\Pages;
@@ -11,9 +32,7 @@ use App\Forms\Components\AddressForm;
 use App\Models\Shop\Order;
 use App\Models\Shop\Product;
 use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -32,30 +51,30 @@ class OrderResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'number';
 
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Group::make()
+        return $schema
+            ->components([
+                Group::make()
                     ->schema([
-                        Forms\Components\Section::make()
+                        Section::make()
                             ->schema(static::getDetailsFormSchema())
                             ->columns(2),
 
-                        Forms\Components\Section::make('Order items')
+                        Section::make('Order items')
                             ->headerActions([
                                 Action::make('reset')
                                     ->modalHeading('Are you sure?')
                                     ->modalDescription('All existing items will be removed from the order.')
                                     ->requiresConfirmation()
                                     ->color('danger')
-                                    ->action(fn (Forms\Set $set) => $set('items', [])),
+                                    ->action(fn (Set $set) => $set('items', [])),
                             ])
                             ->schema([
                                 static::getItemsRepeater(),
@@ -63,13 +82,13 @@ class OrderResource extends Resource
                     ])
                     ->columnSpan(['lg' => fn (?Order $record) => $record === null ? 3 : 2]),
 
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
-                        Forms\Components\Placeholder::make('created_at')
+                        Placeholder::make('created_at')
                             ->label('Created at')
                             ->content(fn (Order $record): ?string => $record->created_at?->diffForHumans()),
 
-                        Forms\Components\Placeholder::make('updated_at')
+                        Placeholder::make('updated_at')
                             ->label('Last modified at')
                             ->content(fn (Order $record): ?string => $record->updated_at?->diffForHumans()),
                     ])
@@ -83,49 +102,49 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('number')
+                TextColumn::make('number')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('customer.name')
+                TextColumn::make('customer.name')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->badge(),
-                Tables\Columns\TextColumn::make('currency')
+                TextColumn::make('currency')
                     ->getStateUsing(fn ($record): ?string => Currency::find($record->currency)?->name ?? null)
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('total_price')
+                TextColumn::make('total_price')
                     ->searchable()
                     ->sortable()
                     ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
+                        Sum::make()
                             ->money(),
                     ]),
-                Tables\Columns\TextColumn::make('shipping_price')
+                TextColumn::make('shipping_price')
                     ->label('Shipping cost')
                     ->searchable()
                     ->sortable()
                     ->toggleable()
                     ->summarize([
-                        Tables\Columns\Summarizers\Sum::make()
+                        Sum::make()
                             ->money(),
                     ]),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Order Date')
                     ->date()
                     ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
 
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        Forms\Components\DatePicker::make('created_from')
+                Filter::make('created_at')
+                    ->schema([
+                        DatePicker::make('created_from')
                             ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
-                        Forms\Components\DatePicker::make('created_until')
+                        DatePicker::make('created_until')
                             ->placeholder(fn ($state): string => now()->format('M d, Y')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -151,11 +170,11 @@ class OrderResource extends Resource
                         return $indicators;
                     }),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
             ->groupedBulkActions([
-                Tables\Actions\DeleteBulkAction::make()
+                DeleteBulkAction::make()
                     ->action(function () {
                         Notification::make()
                             ->title('Now, now, don\'t be cheeky, leave some records for others to play with!')
@@ -174,7 +193,7 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\PaymentsRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 
@@ -188,9 +207,9 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'index' => ListOrders::route('/'),
+            'create' => CreateOrder::route('/create'),
+            'edit' => EditOrder::route('/{record}/edit'),
         ];
     }
 
@@ -228,11 +247,11 @@ class OrderResource extends Resource
         return (string) $modelClass::where('status', 'new')->count();
     }
 
-    /** @return Forms\Components\Component[] */
+    /** @return \Filament\Schemas\Components\Component[] */
     public static function getDetailsFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('number')
+            TextInput::make('number')
                 ->default('OR-' . random_int(100000, 999999))
                 ->disabled()
                 ->dehydrated()
@@ -240,26 +259,26 @@ class OrderResource extends Resource
                 ->maxLength(32)
                 ->unique(Order::class, 'number', ignoreRecord: true),
 
-            Forms\Components\Select::make('shop_customer_id')
+            Select::make('shop_customer_id')
                 ->relationship('customer', 'name')
                 ->searchable()
                 ->required()
                 ->createOptionForm([
-                    Forms\Components\TextInput::make('name')
+                    TextInput::make('name')
                         ->required()
                         ->maxLength(255),
 
-                    Forms\Components\TextInput::make('email')
+                    TextInput::make('email')
                         ->label('Email address')
                         ->required()
                         ->email()
                         ->maxLength(255)
                         ->unique(),
 
-                    Forms\Components\TextInput::make('phone')
+                    TextInput::make('phone')
                         ->maxLength(255),
 
-                    Forms\Components\Select::make('gender')
+                    Select::make('gender')
                         ->placeholder('Select gender')
                         ->options([
                             'male' => 'Male',
@@ -275,12 +294,12 @@ class OrderResource extends Resource
                         ->modalWidth('lg');
                 }),
 
-            Forms\Components\ToggleButtons::make('status')
+            ToggleButtons::make('status')
                 ->inline()
                 ->options(OrderStatus::class)
                 ->required(),
 
-            Forms\Components\Select::make('currency')
+            Select::make('currency')
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $query) => Currency::where('name', 'like', "%{$query}%")->pluck('name', 'id'))
                 ->getOptionLabelUsing(fn ($value): ?string => Currency::firstWhere('id', $value)?->getAttribute('name'))
@@ -289,7 +308,7 @@ class OrderResource extends Resource
             AddressForm::make('address')
                 ->columnSpan('full'),
 
-            Forms\Components\MarkdownEditor::make('notes')
+            MarkdownEditor::make('notes')
                 ->columnSpan('full'),
         ];
     }
@@ -299,12 +318,12 @@ class OrderResource extends Resource
         return Repeater::make('items')
             ->relationship()
             ->schema([
-                Forms\Components\Select::make('shop_product_id')
+                Select::make('shop_product_id')
                     ->label('Product')
                     ->options(Product::query()->pluck('name', 'id'))
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('unit_price', Product::find($state)?->price ?? 0))
+                    ->afterStateUpdated(fn ($state, Set $set) => $set('unit_price', Product::find($state)?->price ?? 0))
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->columnSpan([
@@ -312,7 +331,7 @@ class OrderResource extends Resource
                     ])
                     ->searchable(),
 
-                Forms\Components\TextInput::make('qty')
+                TextInput::make('qty')
                     ->label('Quantity')
                     ->numeric()
                     ->default(1)
@@ -321,7 +340,7 @@ class OrderResource extends Resource
                     ])
                     ->required(),
 
-                Forms\Components\TextInput::make('unit_price')
+                TextInput::make('unit_price')
                     ->label('Unit Price')
                     ->disabled()
                     ->dehydrated()

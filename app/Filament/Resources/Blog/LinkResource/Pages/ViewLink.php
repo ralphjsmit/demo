@@ -2,21 +2,24 @@
 
 namespace App\Filament\Resources\Blog\LinkResource\Pages;
 
+use LaraZeus\SpatieTranslatable\Resources\Pages\ViewRecord\Concerns\Translatable;
+use Filament\Actions\EditAction;
+use LaraZeus\SpatieTranslatable\Actions\LocaleSwitcher;
 use App\Filament\Resources\Blog\LinkResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewLink extends ViewRecord
 {
-    use ViewRecord\Concerns\Translatable;
+    use Translatable;
 
     protected static string $resource = LinkResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make(),
-            Actions\LocaleSwitcher::make(),
+            EditAction::make(),
+            LocaleSwitcher::make(),
         ];
     }
 }

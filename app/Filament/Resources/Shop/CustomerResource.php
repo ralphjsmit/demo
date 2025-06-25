@@ -2,11 +2,24 @@
 
 namespace App\Filament\Resources\Shop;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Shop\CustomerResource\RelationManagers\AddressesRelationManager;
+use App\Filament\Resources\Shop\CustomerResource\RelationManagers\PaymentsRelationManager;
+use App\Filament\Resources\Shop\CustomerResource\Pages\ListCustomers;
+use App\Filament\Resources\Shop\CustomerResource\Pages\CreateCustomer;
+use App\Filament\Resources\Shop\CustomerResource\Pages\EditCustomer;
 use App\Filament\Resources\Shop\CustomerResource\Pages;
 use App\Filament\Resources\Shop\CustomerResource\RelationManagers;
 use App\Models\Shop\Customer;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,45 +36,45 @@ class CustomerResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $navigationGroup = 'Shop';
+    protected static string | \UnitEnum | null $navigationGroup = 'Shop';
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Section::make()
+        return $schema
+            ->components([
+                Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->maxLength(255)
                             ->required(),
 
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->label('Email address')
                             ->required()
                             ->email()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
 
-                        Forms\Components\TextInput::make('phone')
+                        TextInput::make('phone')
                             ->maxLength(255),
 
-                        Forms\Components\DatePicker::make('birthday')
+                        DatePicker::make('birthday')
                             ->maxDate('today'),
                     ])
                     ->columns(2)
                     ->columnSpan(['lg' => fn (?Customer $record) => $record === null ? 3 : 2]),
 
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
-                        Forms\Components\Placeholder::make('created_at')
+                        Placeholder::make('created_at')
                             ->label('Created at')
                             ->content(fn (Customer $record): ?string => $record->created_at?->diffForHumans()),
 
-                        Forms\Components\Placeholder::make('updated_at')
+                        Placeholder::make('updated_at')
                             ->label('Last modified at')
                             ->content(fn (Customer $record): ?string => $record->updated_at?->diffForHumans()),
                     ])
@@ -75,27 +88,27 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(isIndividual: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label('Email address')
                     ->searchable(isIndividual: true, isGlobal: false)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('country')
+                TextColumn::make('country')
                     ->getStateUsing(fn ($record): ?string => Country::find($record->addresses->first()?->country)?->name ?? null),
-                Tables\Columns\TextColumn::make('phone')
+                TextColumn::make('phone')
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
             ->groupedBulkActions([
-                Tables\Actions\DeleteBulkAction::make()
+                DeleteBulkAction::make()
                     ->action(function () {
                         Notification::make()
                             ->title('Now, now, don\'t be cheeky, leave some records for others to play with!')
@@ -114,17 +127,17 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AddressesRelationManager::class,
-            RelationManagers\PaymentsRelationManager::class,
+            AddressesRelationManager::class,
+            PaymentsRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCustomers::route('/'),
-            'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
+            'index' => ListCustomers::route('/'),
+            'create' => CreateCustomer::route('/create'),
+            'edit' => EditCustomer::route('/{record}/edit'),
         ];
     }
 

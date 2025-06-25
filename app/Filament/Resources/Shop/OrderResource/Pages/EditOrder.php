@@ -2,6 +2,13 @@
 
 namespace App\Filament\Resources\Shop\OrderResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Radio;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\Shop\OrderResource;
 use App\Models\Shop\Order;
@@ -29,18 +36,18 @@ class EditOrder extends EditRecord
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('update_status')
+            Action::make('update_status')
                 ->modalCancelActionLabel(fn (self $livewire) => $livewire->defaultAction === 'update_status' ? 'Skip' : null)
-                ->mountUsing(function (Order $record, Forms\Form $form) {
-                    $form->fill([
+                ->mountUsing(function (Order $record, Schema $schema) {
+                    $schema->fill([
                         'test' => 'Initial value',
                         'status' => OrderStatus::New->value,
                     ]);
                 })
-                ->form([
-                    Forms\Components\TextInput::make('test')
+                ->schema([
+                    TextInput::make('test')
                         ->default('Initial from field'),
-                    Forms\Components\Radio::make('status')
+                    Radio::make('status')
                         ->options(OrderStatus::class)
                         ->enum(OrderStatus::class)
                         ->inline()
@@ -60,9 +67,9 @@ class EditOrder extends EditRecord
                         ...$data,
                     ]);
                 }),
-            Actions\DeleteAction::make(),
-            Actions\RestoreAction::make(),
-            Actions\ForceDeleteAction::make(),
+            DeleteAction::make(),
+            RestoreAction::make(),
+            ForceDeleteAction::make(),
         ];
     }
 }

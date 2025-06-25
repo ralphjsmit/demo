@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources\Shop\OrderResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Section;
 use App\Filament\Resources\Shop\OrderResource;
 use App\Models\Shop\Order;
 use App\Models\User;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
-use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
@@ -20,10 +20,10 @@ class CreateOrder extends CreateRecord
 
     protected static string $resource = OrderResource::class;
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return parent::form($form)
-            ->schema([
+        return parent::form($schema)
+            ->components([
                 Wizard::make($this->getSteps())
                     ->startOnStep($this->getStartStep())
                     ->cancelAction($this->getCancelFormAction())
@@ -53,7 +53,7 @@ class CreateOrder extends CreateRecord
             ->sendToDatabase($user);
     }
 
-    /** @return Step[] */
+    /** @return \Filament\Schemas\Components\Wizard\Step[] */
     protected function getSteps(): array
     {
         return [
