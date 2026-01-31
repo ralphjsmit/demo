@@ -4,6 +4,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\AppPanelProvider;
+use App\Providers\Filament\TestPanelProvider;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
@@ -241,6 +242,7 @@ return [
         EventServiceProvider::class,
         AdminPanelProvider::class,
         AppPanelProvider::class,
+        TestPanelProvider::class,
         RouteServiceProvider::class,
 
     ],
