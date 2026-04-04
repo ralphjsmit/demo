@@ -7,7 +7,8 @@
     "mcp": true,
     "nightwatch_mcp": false,
     "packages": [
-        "ralphjsmit/guidelines"
+        "ralphjsmit/guidelines",
+        "filament/blueprint"
     ],
     "sail": false,
     "skills": [

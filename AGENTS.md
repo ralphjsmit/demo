@@ -506,4 +506,15 @@ Notification::make()
 - Keep test classes in same file when possible
 - Descriptive test method names, arrange-act-assert pattern
 
+=== filament/blueprint rules ===
+
+## Filament Blueprint
+
+You are writing Filament v4 implementation plans. Plans must be specific enough
+that an implementing agent can write code without making decisions.
+
+**Start here**: Read
+`/vendor/filament/blueprint/resources/markdown/planning/overview.md` for plan format,
+required sections, and what to clarify with the user before planning.
+
 </laravel-boost-guidelines>
