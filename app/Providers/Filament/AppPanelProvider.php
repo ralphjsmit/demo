@@ -11,6 +11,8 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use RalphJSmit\Filament\MediaLibrary\Drivers\FilesystemStorageDriver;
+use RalphJSmit\Filament\MediaLibrary\FilamentMediaLibrary;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -47,6 +49,11 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->viteTheme('resources/css/filament/app/theme.css')
+            ->plugins([
+                FilamentMediaLibrary::make()
+                    ->driver(FilesystemStorageDriver::class),
             ]);
     }
 }

@@ -13,6 +13,8 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use RalphJSmit\Filament\MediaLibrary\Drivers\FilesystemStorageDriver;
+use RalphJSmit\Filament\MediaLibrary\FilamentMediaLibrary;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -52,6 +54,13 @@ class TestPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->viteTheme('resources/css/filament/test/theme.css')
+            ->plugins([
+                FilamentMediaLibrary::make()
+                    ->driver(FilesystemStorageDriver::class, function (FilesystemStorageDriver $driver): FilesystemStorageDriver {
+                        return $driver->disk('s3')->directory('media-library');
+                    }),
             ]);
     }
 }

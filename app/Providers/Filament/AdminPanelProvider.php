@@ -13,6 +13,8 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use RalphJSmit\Filament\MediaLibrary\Drivers\MediaLibraryItemDriver;
+use RalphJSmit\Filament\MediaLibrary\FilamentMediaLibrary;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -64,6 +66,13 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->colors([
                 'primary' => Color::Blue,
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->plugins([
+                FilamentMediaLibrary::make()
+                    ->driver(MediaLibraryItemDriver::class, function (MediaLibraryItemDriver $driver): MediaLibraryItemDriver {
+                        return $driver->conversions();
+                    }),
             ]);
     }
 }
