@@ -3,7 +3,6 @@
 namespace Database\Factories\Blog;
 
 use App\Models\Blog\Post;
-use Database\Seeders\LocalImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -27,15 +26,5 @@ class PostFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-6 month'),
             'updated_at' => $this->faker->dateTimeBetween('-5 month', 'now'),
         ];
-    }
-
-    public function configure(): PostFactory
-    {
-        return $this->afterCreating(function (Post $product): void {
-            $product
-                ->addMedia(LocalImages::getRandomFile(LocalImages::SIZE_200x200))
-                ->preservingOriginal()
-                ->toMediaCollection('post-images');
-        });
     }
 }

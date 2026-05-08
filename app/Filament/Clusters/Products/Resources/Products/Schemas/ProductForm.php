@@ -8,8 +8,8 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use RalphJSmit\Filament\MediaLibrary\Filament\Forms\Components\MediaPicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
@@ -53,13 +53,11 @@ class ProductForm
 
                         Section::make('Images')
                             ->schema([
-                                SpatieMediaLibraryFileUpload::make('media')
-                                    ->collection('product-images')
+                                MediaPicker::make('mediaLibraryItems')
                                     ->multiple()
-                                    ->maxFiles(5)
                                     ->reorderable()
-                                    ->acceptedFileTypes(['image/jpeg'])
-                                    ->hiddenLabel(),
+                                    ->relationship('mediaLibraryItems')
+                                    ->label('Images'),
                             ])
                             ->collapsible(),
 

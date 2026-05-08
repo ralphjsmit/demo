@@ -4,19 +4,24 @@ namespace App\Models\Shop;
 
 use App\Models\Address;
 use App\Models\Comment;
+use App\Models\Team;
 use Database\Factories\Shop\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
     use HasFactory;
 
+    use LogsActivity;
     use SoftDeletes;
 
     /**
@@ -30,6 +35,12 @@ class Customer extends Model
     protected $casts = [
         'birthday' => 'date',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'email', 'phone']);
+    }
 
     /** @return MorphToMany<Address, $this> */
     public function addresses(): MorphToMany
@@ -47,5 +58,11 @@ class Customer extends Model
     public function payments(): HasManyThrough
     {
         return $this->hasManyThrough(Payment::class, Order::class, 'shop_customer_id');
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 }

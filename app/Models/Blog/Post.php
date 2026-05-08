@@ -3,23 +3,24 @@
 namespace App\Models\Blog;
 
 use App\Models\Comment;
+use App\Models\Team;
 use Database\Factories\Blog\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Tags\HasTags;
 
-class Post extends Model implements HasMedia
+class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
     use HasFactory;
 
     use HasTags;
-    use InteractsWithMedia;
+    use LogsActivity;
 
     /**
      * @var string
@@ -31,7 +32,14 @@ class Post extends Model implements HasMedia
      */
     protected $casts = [
         'published_at' => 'date',
+        'attachments' => 'array',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'content', 'published_at']);
+    }
 
     /** @return BelongsTo<Author, $this> */
     public function author(): BelongsTo
@@ -51,18 +59,15 @@ class Post extends Model implements HasMedia
         return $this->morphMany(Comment::class, 'commentable');
     }
 
-    public function registerMediaCollections(): void
+    /** @return BelongsTo<MediaLibraryItem, $this> */
+    public function image(): BelongsTo
     {
-        $this
-            ->addMediaCollection('post-images')
-            ->useDisk('post-images')
-            ->acceptsMimeTypes(['image/jpeg'])
-            ->singleFile()
-            ->registerMediaConversions(function (Media $media): void {
-                $this
-                    ->addMediaConversion('thumb')
-                    ->width(40)
-                    ->height(40);
-            });
+        return $this->belongsTo(MediaLibraryItem::class, 'image_id');
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 }

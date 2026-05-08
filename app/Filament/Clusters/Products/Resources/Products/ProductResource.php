@@ -12,7 +12,7 @@ use App\Filament\Clusters\Products\Resources\Products\Tables\ProductsTable;
 use App\Filament\Clusters\Products\Resources\Products\Widgets\ProductStats;
 use App\Models\Shop\Product;
 use BackedEnum;
-use Filament\Resources\Resource;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;

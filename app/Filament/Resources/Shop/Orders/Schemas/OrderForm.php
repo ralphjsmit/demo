@@ -20,6 +20,10 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use RalphJSmit\Filament\RecordFinder\Forms\Components\RecordFinder;
 use Squire\Models\Currency;
 
 class OrderForm
@@ -79,31 +83,18 @@ class OrderForm
                 ->maxLength(32)
                 ->unique(Order::class, 'number', ignoreRecord: true),
 
-            Select::make('shop_customer_id')
-                ->relationship('customer', 'name')
-                ->searchable()
+            RecordFinder::make('shop_customer_id')
+                ->relationship('customer')
+                ->recordLabelAttribute('name')
                 ->required()
-                ->createOptionForm([
-                    TextInput::make('name')
-                        ->required()
-                        ->maxLength(255),
-
-                    TextInput::make('email')
-                        ->label('Email address')
-                        ->required()
-                        ->email()
-                        ->maxLength(255)
-                        ->unique(),
-
-                    TextInput::make('phone')
-                        ->maxLength(255),
+                ->tableColumns([
+                    TextColumn::make('name')->searchable()->sortable(),
+                    TextColumn::make('email')->searchable(),
+                    TextColumn::make('phone'),
                 ])
-                ->createOptionAction(function (Action $action) {
-                    return $action
-                        ->modalHeading('Create customer')
-                        ->modalSubmitActionLabel('Create customer')
-                        ->modalWidth('lg');
-                }),
+                ->slideOver()
+                ->modalWidth('5xl')
+                ->label('Customer'),
 
             ToggleButtons::make('status')
                 ->inline()
@@ -136,15 +127,24 @@ class OrderForm
                     ->width(110),
             ])
             ->schema([
-                Select::make('shop_product_id')
+                RecordFinder::make('shop_product_id')
                     ->label('Product')
-                    ->options(Product::query()->pluck('name', 'id'))
+                    ->tableQuery(Product::query())
+                    ->recordLabelAttribute('name')
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(fn ($state, Set $set) => $set('unit_price', Product::find($state)->price ?? 0))
-                    ->distinct()
-                    ->disableOptionsWhenSelectedInSiblingRepeaterItems()
-                    ->searchable(),
+                    ->tableColumns([
+                        TextColumn::make('name')->searchable()->sortable(),
+                        TextColumn::make('sku')->searchable(),
+                        TextColumn::make('price')->money('USD')->sortable(),
+                        TextColumn::make('qty')->label('Stock'),
+                        IconColumn::make('is_visible')->boolean(),
+                    ])
+                    ->tableFilters([
+                        SelectFilter::make('brand')->relationship('brand', 'name'),
+                    ])
+                    ->slideOver(),
 
                 TextInput::make('qty')
                     ->label('Quantity')

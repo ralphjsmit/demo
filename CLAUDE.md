@@ -133,6 +133,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - To run all tests: `php artisan test --compact`.
 - To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
 - To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
+
 === ralphjsmit/guidelines rules ===
 
 # Coding standards

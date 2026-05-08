@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Shop\Orders\Tables;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use RalphJSmit\Filament\Activitylog\Filament\Actions\TimelineAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -93,6 +94,8 @@ class OrdersTable
             ])
             ->recordActions([
                 EditAction::make(),
+                TimelineAction::make()
+                    ->slideOver(),
             ])
             ->groupedBulkActions([
                 DeleteBulkAction::make()

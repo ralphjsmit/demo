@@ -3,7 +3,7 @@
 namespace App\Filament\Clusters\Products\Resources\Products\Pages;
 
 use App\Filament\Clusters\Products\Resources\Products\ProductResource;
-use Filament\Resources\Pages\CreateRecord;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource\Pages\CreateRecord;
 
 class CreateProduct extends CreateRecord
 {

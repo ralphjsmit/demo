@@ -3,22 +3,23 @@
 namespace App\Models\Shop;
 
 use App\Models\Comment;
+use App\Models\Team;
 use Database\Factories\Shop\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use RalphJSmit\Filament\MediaLibrary\Models\MediaLibraryItem;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class Product extends Model implements HasMedia
+class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
     use HasFactory;
 
-    use InteractsWithMedia;
+    use LogsActivity;
 
     /**
      * @var string
@@ -35,6 +36,12 @@ class Product extends Model implements HasMedia
         'requires_shipping' => 'boolean',
         'published_at' => 'date',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'price', 'old_price', 'qty', 'is_visible', 'published_at']);
+    }
 
     /** @return BelongsTo<Brand, $this> */
     public function brand(): BelongsTo
@@ -54,17 +61,18 @@ class Product extends Model implements HasMedia
         return $this->morphMany(Comment::class, 'commentable');
     }
 
-    public function registerMediaCollections(): void
+    /** @return BelongsToMany<MediaLibraryItem, $this> */
+    public function mediaLibraryItems(): BelongsToMany
     {
-        $this
-            ->addMediaCollection('product-images')
-            ->useDisk('product-images')
-            ->acceptsMimeTypes(['image/jpeg'])
-            ->registerMediaConversions(function (Media $media): void {
-                $this
-                    ->addMediaConversion('thumb')
-                    ->width(40)
-                    ->height(40);
-            });
+        return $this->belongsToMany(MediaLibraryItem::class, 'media_library_item_product', 'shop_product_id', 'media_library_item_id')
+            ->withPivot('order_column')
+            ->orderByPivot('order_column')
+            ->withTimestamps();
+    }
+
+    /** @return BelongsTo<Team, $this> */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 }

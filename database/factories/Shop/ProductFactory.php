@@ -3,7 +3,6 @@
 namespace Database\Factories\Shop;
 
 use App\Models\Shop\Product;
-use Database\Seeders\LocalImages;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -37,15 +36,5 @@ class ProductFactory extends Factory
             'created_at' => $this->faker->dateTimeBetween('-1 year', '-6 month'),
             'updated_at' => $this->faker->dateTimeBetween('-5 month', 'now'),
         ];
-    }
-
-    public function configure(): ProductFactory
-    {
-        return $this->afterCreating(function (Product $product): void {
-            $product
-                ->addMedia(LocalImages::getRandomFile(LocalImages::SIZE_200x200))
-                ->preservingOriginal()
-                ->toMediaCollection('product-images');
-        });
     }
 }

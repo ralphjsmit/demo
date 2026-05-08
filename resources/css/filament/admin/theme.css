@@ -3,3 +3,11 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/ralphjsmit/laravel-filament-upload/resources/**/*.blade.php';
+@source '../../../../vendor/ralphjsmit/laravel-filament-activitylog/resources/**/*.blade.php';
+@source '../../../../vendor/ralphjsmit/laravel-filament-record-finder/resources/**/*.blade.php';
+@source '../../../../vendor/ralphjsmit/laravel-filament-onboard/resources/**/*.blade.php';
+@source '../../../../vendor/ralphjsmit/laravel-filament-pulse/resources/**/*.blade.php';
+@source '../../../../vendor/laravel/pulse/resources/**/*.blade.php';
+@source '../../../../vendor/jibaymcs/filament-tour/resources/**/*.blade.php';
+@source '../../../../vendor/ralphjsmit/laravel-filament-notifications/resources/**/*.blade.php';

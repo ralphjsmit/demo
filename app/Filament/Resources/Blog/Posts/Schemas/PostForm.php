@@ -6,8 +6,10 @@ use App\Models\Blog\Post;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\SpatieTagsInput;
+use RalphJSmit\Filament\MediaLibrary\Filament\Forms\Components\MediaPicker;
+use RalphJSmit\Filament\Upload\Filament\Forms\Components\AdvancedFileUpload;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
@@ -58,10 +60,25 @@ class PostForm
 
                 Section::make('Image')
                     ->schema([
-                        SpatieMediaLibraryFileUpload::make('image')
-                            ->collection('post-images')
-                            ->hiddenLabel()
-                            ->acceptedFileTypes(['image/jpeg']),
+                        MediaPicker::make('image_id')
+                            ->relationship('image')
+                            ->label('Featured image'),
+                    ])
+                    ->collapsible(),
+
+                Section::make('Attachments')
+                    ->schema([
+                        AdvancedFileUpload::make('attachments')
+                            ->multiple()
+                            ->disk('r2_public')
+                            ->directory(fn () => Filament::getTenant()?->getStoragePrefix() . '/post-attachments')
+                            ->reorderable()
+                            ->downloadable(true)
+                            ->editable(true)
+                            ->previewable(true)
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->label('Attachments')
+                            ->columns(2),
                     ])
                     ->collapsible(),
             ]);

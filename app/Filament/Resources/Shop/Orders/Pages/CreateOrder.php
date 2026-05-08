@@ -8,8 +8,8 @@ use App\Models\Shop\Order;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Wizard\Step;
 

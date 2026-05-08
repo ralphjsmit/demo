@@ -11,7 +11,7 @@ use App\Filament\Resources\Shop\Orders\Tables\OrdersTable;
 use App\Filament\Resources\Shop\Orders\Widgets\OrderStats;
 use App\Models\Shop\Order;
 use BackedEnum;
-use Filament\Resources\Resource;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;

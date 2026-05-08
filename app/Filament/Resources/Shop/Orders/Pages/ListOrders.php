@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Shop\Orders\Pages;
 use App\Filament\Resources\Shop\Orders\OrderResource;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
-use Filament\Resources\Pages\ListRecords;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 
 class ListOrders extends ListRecords

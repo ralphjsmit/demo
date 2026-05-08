@@ -25,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        set_time_limit(120);
+
         Model::unguard();
 
         if (app()->environment('production')) {

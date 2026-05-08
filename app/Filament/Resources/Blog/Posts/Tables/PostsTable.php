@@ -9,8 +9,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use RalphJSmit\Filament\MediaLibrary\Filament\Tables\Columns\MediaColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,9 +22,8 @@ class PostsTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')
-                    ->collection('post-images')
-                    ->conversion('thumb'),
+                MediaColumn::make('image')
+                    ->relationship(),
 
                 TextColumn::make('title')
                     ->searchable()

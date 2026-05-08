@@ -5,7 +5,7 @@ namespace App\Filament\Clusters\Products\Resources\Products\Pages;
 use App\Filament\Clusters\Products\Resources\Products\ProductResource;
 use Filament\Actions\CreateAction;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
-use Filament\Resources\Pages\ListRecords;
+use RalphJSmit\Filament\AutoTranslator\Filament\Resources\Resource\Pages\ListRecords;
 
 class ListProducts extends ListRecords
 {

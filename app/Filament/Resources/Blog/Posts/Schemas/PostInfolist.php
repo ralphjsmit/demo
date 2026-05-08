@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Blog\Posts\Schemas;
 
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\SpatieTagsEntry;
+use RalphJSmit\Filament\MediaLibrary\Filament\Infolists\Components\MediaEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
@@ -37,8 +37,8 @@ class PostInfolist
                                         SpatieTagsEntry::make('tags'),
                                     ]),
                                 ]),
-                            SpatieMediaLibraryImageEntry::make('image')
-                                ->collection('post-images')
+                            MediaEntry::make('image')
+                                ->relationship()
                                 ->hiddenLabel()
                                 ->grow(false),
                         ])->from('lg'),

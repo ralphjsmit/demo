@@ -7,6 +7,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
+use RalphJSmit\Filament\Activitylog\Filament\Infolists\Components\Timeline;
 
 class EditCustomer extends EditRecord
 {
@@ -19,5 +21,14 @@ class EditCustomer extends EditRecord
             RestoreAction::make(),
             ForceDeleteAction::make(),
         ];
+    }
+
+    public function aside(Schema $schema): Schema
+    {
+        return $schema->components([
+            Timeline::make()
+                ->withRelations(['orders'])
+                ->searchable(),
+        ]);
     }
 }

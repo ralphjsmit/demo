@@ -3,7 +3,7 @@
 namespace App\Filament\Clusters\Products;
 
 use BackedEnum;
-use Filament\Clusters\Cluster;
+use RalphJSmit\Filament\AutoTranslator\Filament\Clusters\Cluster;
 use UnitEnum;
 
 class ProductsCluster extends Cluster

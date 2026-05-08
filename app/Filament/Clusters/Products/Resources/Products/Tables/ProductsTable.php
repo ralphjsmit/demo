@@ -6,8 +6,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use RalphJSmit\Filament\MediaLibrary\Filament\Tables\Columns\MediaColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
@@ -22,9 +22,10 @@ class ProductsTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')
-                    ->collection('product-images')
-                    ->conversion('thumb'),
+                MediaColumn::make('mediaLibraryItems')
+                    ->relationship()
+                    ->circular()
+                    ->size(40),
 
                 TextColumn::make('name')
                     ->searchable()

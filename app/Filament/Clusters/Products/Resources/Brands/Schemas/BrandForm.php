@@ -11,7 +11,9 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Facades\Filament;
 use Illuminate\Support\Str;
+use RalphJSmit\Filament\Upload\Filament\Forms\Components\AdvancedFileUpload;
 
 class BrandForm
 {
@@ -40,6 +42,15 @@ class BrandForm
                             ->required()
                             ->maxLength(255)
                             ->url(),
+
+                        AdvancedFileUpload::make('logo')
+                            ->image()
+                            ->disk('r2_public')
+                            ->directory(fn () => Filament::getTenant()?->getStoragePrefix() . '/brand-logos')
+                            ->editable(true)
+                            ->previewable(true)
+                            ->downloadable(true)
+                            ->label('Logo'),
 
                         Toggle::make('is_visible')
                             ->label('Visibility')
